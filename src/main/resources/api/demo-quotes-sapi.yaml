@@ -1,0 +1,82 @@
+openapi: 3.0.3
+info:
+  title: Demo Quotes System API
+  description: Returns a hardcoded list of quotes.
+  version: v1
+servers:
+  - url: http://localhost:8081/api
+paths:
+  /quotes:
+    get:
+      operationId: listQuotes
+      summary: List quotes
+      description: Return the hardcoded quote catalog.
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          description: Correlation id for this request.
+          schema:
+            type: string
+          example: 8f3b2c10-6a1e-4f2d-9c77-2a1b6e5d4c3a
+      responses:
+        '200':
+          description: The quote catalog.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [quoteId, customerName, amount, currency, status]
+                  properties:
+                    quoteId:
+                      type: string
+                    customerName:
+                      type: string
+                    amount:
+                      type: number
+                      format: double
+                    currency:
+                      type: string
+                    status:
+                      type: string
+                      enum: [open, accepted, expired]
+              example:
+                - quoteId: q-100
+                  customerName: Acme Corp
+                  amount: 1200.0
+                  currency: USD
+                  status: open
+                - quoteId: q-200
+                  customerName: Northwind Traders
+                  amount: 480.5
+                  currency: USD
+                  status: accepted
+        '400':
+          description: The request is missing x-correlation-id.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [type, title, status, detail, correlationId]
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: string
+                  correlationId:
+                    type: string
+              example:
+                type: https://errors.example.com/quotes/bad-request
+                title: Bad Request
+                status: 400
+                detail: Header x-correlation-id is required.
+                instance: /api/quotes
+                correlationId: 8f3b2c10-6a1e-4f2d-9c77-2a1b6e5d4c3a

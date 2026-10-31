@@ -1,0 +1,9 @@
+{
+  "main": "demo-quotes-sapi.yaml",
+  "name": "Demo Quotes System API",
+  "classifier": "oas",
+  "apiVersion": "v1",
+  "originalFormatVersion": "3.0",
+  "descriptorVersion": "1.0.0",
+  "tags": []
+}

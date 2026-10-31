@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <error-handler name="global-error-handler" doc:name="Global error handler">
+        <on-error-propagate type="APIKIT:BAD_REQUEST" enableNotifications="true" logException="true" doc:name="Bad request">
+            <ee:transform doc:name="400 problem detail">
+                <ee:message>
+                    <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  type: "https://errors.example.com/quotes/bad-request",
+  title: "Bad Request",
+  status: 400,
+  detail: error.description default "The request is invalid.",
+  instance: vars.requestPath default attributes.requestPath,
+  correlationId: vars.correlationId default correlationId
+}]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+            <set-variable variableName="httpStatus" value="400" doc:name="Set 400"/>
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:NOT_FOUND" enableNotifications="true" logException="true" doc:name="Not found">
+            <ee:transform doc:name="404 problem detail">
+                <ee:message>
+                    <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  type: "https://errors.example.com/quotes/not-found",
+  title: "Not Found",
+  status: 404,
+  detail: error.description default "The requested resource was not found.",
+  instance: vars.requestPath default attributes.requestPath,
+  correlationId: vars.correlationId default correlationId
+}]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+            <set-variable variableName="httpStatus" value="404" doc:name="Set 404"/>
+        </on-error-propagate>
+        <on-error-propagate type="ANY" enableNotifications="true" logException="true" doc:name="Unexpected error">
+            <ee:transform doc:name="500 problem detail">
+                <ee:message>
+                    <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  type: "https://errors.example.com/quotes/server-error",
+  title: "Internal Server Error",
+  status: 500,
+  detail: "An unexpected error occurred while processing the request.",
+  instance: vars.requestPath default attributes.requestPath,
+  correlationId: vars.correlationId default correlationId
+}]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+            <set-variable variableName="httpStatus" value="500" doc:name="Set 500"/>
+        </on-error-propagate>
+    </error-handler>
+</mule>
