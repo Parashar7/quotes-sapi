@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven settings.xml — PLACEHOLDER ONLY. No secrets are stored here.
+
+  HOW TO USE:
+  1. Copy this file to ~/.m2/settings.xml (or supply -s settings.xml in the pipeline).
+  2. Replace every FILL_ME_* value with the real credential/value.
+  3. In Azure DevOps, inject credentials as pipeline variables and pass them via
+     -Danypoint.username=$(ANYPOINT_USERNAME) -Danypoint.password=$(ANYPOINT_PASSWORD)
+     - never hardcode them here.
+
+  FILL_ME items outstanding:
+  • FILL_ME_ANYPOINT_USERNAME  — Connected App client ID or username
+  • FILL_ME_ANYPOINT_PASSWORD  — Connected App client secret or password (use a variable)
+  • FILL_ME_ADO_ORG            — Azure DevOps organisation name (e.g. my-org)
+  • FILL_ME_ANYPOINT_ORG_ID    — Anypoint Business Group (organisation) ID (UUID)
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0
+                              https://maven.apache.org/xsd/settings-1.2.0.xsd">
+
+    <!-- ============================================================
+         Server credentials
+         In CI: values come from Azure DevOps secret variables, not here.
+         ============================================================ -->
+    <servers>
+        <server>
+            <id>anypoint-exchange-v3</id>
+            <username>FILL_ME_ANYPOINT_USERNAME</username>
+            <password>FILL_ME_ANYPOINT_PASSWORD</password>
+        </server>
+    </servers>
+
+    <!-- ============================================================
+         Profiles
+         ============================================================ -->
+    <profiles>
+        <!-- archetype-read: allows mvn archetype:generate to resolve
+             MuleSoft archetypes from Anypoint Exchange -->
+        <profile>
+            <id>archetype-read</id>
+            <repositories>
+                <repository>
+                    <id>anypoint-exchange-v3</id>
+                    <name>Anypoint Exchange v3</name>
+                    <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>mulesoft-releases</id>
+                    <name>MuleSoft Releases</name>
+                    <url>https://repository.mulesoft.org/releases/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>mulesoft-releases</id>
+                    <name>MuleSoft Releases</name>
+                    <url>https://repository.mulesoft.org/releases/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>archetype-read</activeProfile>
+    </activeProfiles>
+
+</settings>
